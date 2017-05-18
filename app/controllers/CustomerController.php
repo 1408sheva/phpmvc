@@ -55,17 +55,70 @@ class CustomerController extends Controller {
         $model = $this->getModel('Customer');
         $email = $model->getColumn('email');
         $this->setTitle("Регістрація");
-        var_dump($email);
+        $post = $model->getPostValues();
         if (in_array($_POST['email'],$email)) {
-            echo 4534534534534;
-        }
-        else echo '1111';
-        $this->RegisterSave();
+            $this->registry['errors_reg'][] = 'E-mail використовується;';
+        }else{
+        $this->RegisterSave($post);}
         $this->setView();
         $this->renderLayout();
     }
 
-    public function RegisterSave(){
-        var_dump($_POST);
+    public function RegisterSave($post = []){
+        $l_name = '';
+        $f_name = '';
+        $email = '';
+        $password = '';
+        $phone = '';
+        $passwordConfirm = '';
+        $city = '';
+        $result = false;
+
+        if (isset($post)){
+            $l_name = $post['last_name'];
+            $f_name = $post['first_name'];
+            $phone = $post['telephone'];
+            $email = $post['email'];
+            $password = $post['password'];
+            $passwordConfirm = $_POST['passwordConfirm'];
+            $city = $post['city'];
+
+            $errors = false;
+
+            if (!User::checkName($l_name)){
+                $this->registry['errors_reg'][] = 'Ім`я не повинно бути короче 2 символів';
+            }
+            if (!User::checkName($f_name)){
+                $this->registry['errors_reg'][] = 'Прізвище не повинно бути короче 2 символів';
+            }
+            if (!User::checkEmail($email)){
+                $this->registry['errors_reg'][] = 'Не правильний email!';
+            }
+            if (!User::checkPassword($password)){
+                $this->registry['errors_reg'][] = 'Пароль не повинний бути менше 6 символів';
+            }
+            if (!User::checkPhone($phone)){
+                $this->registry['errors_reg'][] = 'Невірно введений номер';
+            }
+            if (!User::passwordConfirm($password, $passwordConfirm)){
+                $this->registry['errors_reg'][] = 'Паролі не співпадають';
+            }
+
+
+        }
+        $errors = $this->registry['errors_reg'] ;
+        if (!$errors){
+            $params =array (
+                'last_name'=>$l_name,
+                'first_name'=>$f_name,
+                'telephone'=>$phone,
+                'email'=>$email,
+                'password'=> md5($password),
+                'city'=>$city
+            );
+            $customer = $this->getModel('customer')->addItem($params);
+            Helper::redirect('/customer/login');
+
+        }
     }
 }

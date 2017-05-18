@@ -1,4 +1,4 @@
-<?php
+<?php var_dump($_SERVER);
     if (isset($this->invalid_password)) {
         echo "<p style=\"color:red\"> Неправильні ім'я або пароль!</p>"; 
     }

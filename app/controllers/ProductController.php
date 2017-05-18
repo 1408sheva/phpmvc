@@ -43,7 +43,6 @@ class ProductController extends Controller {
         $model = $this->getModel('Product');
         $this->setTitle("Додавання товару");
         if ($values = $model->getPostValues()) {
-            global $erorr;
             $erorr=[];
             if (empty($values['sku'])){
                 $erorr[] = "Ви не ввели код товару;";

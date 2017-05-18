@@ -43,6 +43,7 @@ class Controller {
         } else {
             $class_name = get_called_class();
         }
+        $registry = $this->registry;
         $controller = substr($class_name, 0, strpos($class_name, 'Controller'));
         $view_path = ROOT . '/app/views/' . strtolower($controller) . '/' . strtolower($this->getView()) . '.php';
         if(file_exists($view_path)) {

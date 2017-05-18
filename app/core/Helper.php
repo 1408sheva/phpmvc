@@ -36,7 +36,7 @@ class Helper {
     
     public static function redirect($path) {
         $server_host = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
-        $url = $server_host . "/" . BP . $path;
+        $url = $server_host . BP . $path;
         header("Location: $url");
     }
 }

@@ -30,7 +30,7 @@ class Model {
         $sql = "select $this->table_name.$column_name from $this->table_name;";
         $results = $db->query($sql);
         foreach($results as $result) {
-            array_push($this->column,$result[$column_name]);
+            $this->column[] = $result[$column_name];
         }
         return $this->column;
     }
