@@ -51,7 +51,7 @@ class Controller {
         }
     }
     
-    public function renderLayout($layout = "layout", $file = '') {
+    public function renderLayout($layout = "layout") {
         if(file_exists(ROOT . '/app/layouts/'.$layout.'.php')) {
             include ROOT . '/app/layouts/'.$layout.'.php';
         }      

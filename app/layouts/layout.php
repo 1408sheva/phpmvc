@@ -20,7 +20,7 @@
         </div>
         <div class="container">
 
-            <?php $this->renderView($file);?>
+            <?php $this->renderView();?>
         </div>
         
         <hr style="margin:50px 5px;background-color: black;height: 1px;">

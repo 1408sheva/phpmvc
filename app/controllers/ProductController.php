@@ -43,31 +43,30 @@ class ProductController extends Controller {
         $model = $this->getModel('Product');
         $this->setTitle("Додавання товару");
         if ($values = $model->getPostValues()) {
-            $erorr=[];
             if (empty($values['sku'])){
-                $erorr[] = "Ви не ввели код товару;";
+                $this->registry['error_add'][] = "Ви не ввели код товару;";
             }
             if (empty($values['name'])){
-                $erorr[] = "Ви не ввели ім'я товару;";
+                $this->registry['error_add'][] = "Ви не ввели ім'я товару;";
             }
             if (empty($values['price'])){
-                $erorr[] = "Ви не ввели ціну;";
+                $this->registry['error_add'][] = "Ви не ввели ціну;";
             }
             elseif (!is_numeric($values['price'])) {
-                $erorr[] = "Ціна повина бути числом;";
+                $this->registry['error_add'][] = "Ціна повина бути числом;";
             }
             if (empty($values['qty'])){
-                $erorr[] = "Ви не ввели кількісь;";
+                $this->registry['error_add'][] = "Ви не ввели кількісь;";
             }
             elseif (!is_numeric($values['qty'])) {
-                $erorr[] = "Кількість повина бути числом;";
+                $this->registry['error_add'][] = "Кількість повина бути числом;";
             }
             if ($erorr == false) {
                 $model->addItem($values);
             }
         }
         $this->setView();
-        $this->renderLayout('layout', $erorr);
+        $this->renderLayout();
     }
     
     public function getSortParams() {

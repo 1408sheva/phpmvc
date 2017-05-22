@@ -56,7 +56,7 @@ class CustomerController extends Controller {
         $email = $model->getColumn('email');
         $this->setTitle("Регістрація");
         $post = $model->getPostValues();
-        if (in_array($_POST['email'],$email)) {
+        if (!empty($_POST['email']) && in_array($_POST['email'],$email)) {
             $this->registry['errors_reg'][] = 'E-mail використовується;';
         }else{
         $this->RegisterSave($post);}
@@ -72,18 +72,17 @@ class CustomerController extends Controller {
         $phone = '';
         $passwordConfirm = '';
         $city = '';
-        $result = false;
 
         if (isset($post)){
+            if (!empty($post)){
             $l_name = $post['last_name'];
             $f_name = $post['first_name'];
             $phone = $post['telephone'];
             $email = $post['email'];
             $password = $post['password'];
             $passwordConfirm = $_POST['passwordConfirm'];
-            $city = $post['city'];
+            $city = $post['city'];}
 
-            $errors = false;
 
             if (!User::checkName($l_name)){
                 $this->registry['errors_reg'][] = 'Ім`я не повинно бути короче 2 символів';
@@ -95,7 +94,7 @@ class CustomerController extends Controller {
                 $this->registry['errors_reg'][] = 'Не правильний email!';
             }
             if (!User::checkPassword($password)){
-                $this->registry['errors_reg'][] = 'Пароль не повинний бути менше 6 символів';
+                $this->registry['errors_reg'][] = 'Пароль не повинний бути менше 8 символів, та повинний містити латинські літери та число';
             }
             if (!User::checkPhone($phone)){
                 $this->registry['errors_reg'][] = 'Невірно введений номер';
@@ -103,20 +102,20 @@ class CustomerController extends Controller {
             if (!User::passwordConfirm($password, $passwordConfirm)){
                 $this->registry['errors_reg'][] = 'Паролі не співпадають';
             }
-
-
+            $errors = false;
         }
-        $errors = $this->registry['errors_reg'] ;
+        @$errors = $this->registry['errors_reg'] ;
         if (!$errors){
             $params =array (
-                'last_name'=>$l_name,
-                'first_name'=>$f_name,
+                'last_name'=>strip_tags($l_name),
+                'first_name'=>strip_tags($f_name),
                 'telephone'=>$phone,
                 'email'=>$email,
-                'password'=> md5($password),
-                'city'=>$city
+                'password'=> md5(strip_tags($password)),
+                'city'=>strip_tags($city)
             );
             $customer = $this->getModel('customer')->addItem($params);
+            setcookie('register', 'yes', time()+3, '/customer/login');
             Helper::redirect('/customer/login');
 
         }

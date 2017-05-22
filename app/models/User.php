@@ -33,7 +33,8 @@ class User extends Model {
      * Проверяет пароль: не меньше, чем 6 символов
      */
     public static function checkPassword($password) {
-        if (strlen($password) >= 6) {
+        $patern = '/^[0-9]+[a-z,A-Z]+$/';
+        if (preg_match($patern, $password) && strlen($password) >= 8) {
             return true;
         }
         return false;

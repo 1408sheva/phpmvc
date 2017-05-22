@@ -81,16 +81,17 @@ class Model {
         return $db->query($sql, $params)[0];
     }
 
-    public function saveItem($values) {
-        $sql = "insert into `{$this->table_name}`(";
+    public function saveItem($id, $values) {
+        $sql = "update $this->table_name"
+            . " set ";
         $params = [];
         foreach ($values as $key=>$value) {
-            $sql .= "$key,";
+            $sql .= "$key = ?,";
             array_push($params, $value);
         }
         $sql = chop($sql,',');
-        $sql .= ") values (?,?,?,?);";
-        
+        $sql .= " where $this->id_column = ?;";
+        array_push($params, $id);
         $db = new DB();
         return $db->query($sql, $params);
     }

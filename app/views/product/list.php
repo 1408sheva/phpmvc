@@ -1,12 +1,21 @@
-<?php  $s = unserialize($_COOKIE['sortparams']);?>
+<?php  if (!empty($_COOKIE['sortparams'])){$s = unserialize($_COOKIE['sortparams']);};?>
 <form method="POST" action="<?php $_SERVER['PHP_SELF'];?>">
 <select name='sortfirst'>
-    <option <?php echo filter_input(INPUT_POST, 'sortfirst') === 'price_ASC' ? 'selected' : '';?> value="price_ASC" <?php if ($s['price'] == "ASC"){ echo 'selected';}?>>від дешевших до дорожчих</option>
-    <option <?php echo filter_input(INPUT_POST, 'sortfirst') === 'price_DESC' ? 'selected' : '';?> value="price_DESC" <?php if ($s['price'] == "DESC"){ echo "selected";} ?>>від дорожчих до дешевших</option>
+    <option <?php echo filter_input(INPUT_POST, 'sortfirst') === 'price_ASC' ? 'selected' : '';?> value="price_ASC" <?php
+    if (!empty($s['price'])) {if ($s['price'] == "ASC"){ echo 'selected';}}?>
+    >від дешевших до дорожчих</option>
+    <option <?php echo filter_input(INPUT_POST, 'sortfirst') === 'price_DESC' ? 'selected' : '';?> value="price_DESC" <?php
+    if (!empty($_POST['sortfirst'])){if ($_POST['sortfirst'] == 'price_DESC') echo 'selected';}
+    elseif (!empty($s['price'])) {if ($s['price'] == "DESC"){ echo 'selected';}}?>
+    >від дорожчих до дешевших</option>
 </select>
 <select name='sortsecond'>
-  <option <?php echo filter_input(INPUT_POST, 'sortsecond') === 'qty_ASC' ? 'selected' : '';?>  value="qty_ASC"  <?php if ($s['qty'] == "ASC"){ echo 'selected';}?>>по зростанню кількості</option>
-  <option <?php echo filter_input(INPUT_POST, 'sortsecond') === 'qty_DESC' ? 'selected' : '';?>  value="qty_DESC" <?php if ($s['qty'] == "DESC"){ echo "selected";} ?>>по спаданню кількості</option>
+  <option <?php echo filter_input(INPUT_POST, 'sortsecond') === 'qty_ASC' ? 'selected' : '';?>  value="qty_ASC"  <?php
+  if (!empty($s['qty'])) { if ($s['qty'] == "ASC"){ echo 'selected';}}?>
+  >по зростанню кількості</option>
+  <option <?php echo filter_input(INPUT_POST, 'sortsecond') === 'qty_DESC' ? 'selected' : '';?>  value="qty_DESC" <?php
+  if (!empty($_POST['sortfirst'])){if ($_POST['sortfirst'] == 'qty_DESC') echo 'selected';}
+  elseif (!empty($s['qty'])) {if ($s['qty'] == "DESC"){ echo 'selected';}}?>  >по спаданню кількості</option>
 </select>
 <input type="submit" value="Submit">
 </form>
@@ -33,4 +42,3 @@ foreach($products as $product)  :
         </p>
     </div>
 <?php endforeach; ?>
-
