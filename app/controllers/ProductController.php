@@ -29,9 +29,27 @@ class ProductController extends Controller {
         $this->setTitle("Редагування товару");
         $id = filter_input(INPUT_POST, 'id');
         if ($id) {
-            $values = $model->getPostValues();
-            $this->registry['saved'] = 1;
-            $model->saveItem($id,$values);
+            if ($values = $model->getPostValues()) {
+                $values['sku'] = strip_tags($values['sku']);
+                $values['name'] = strip_tags($values['name']);
+                $values['description'] = htmlspecialchars($values['description']);
+                if (empty($values['name'])){
+                    $this->registry['error_edit'][] = "Ви не ввели ім'я товару;";
+                }
+                if (is_int($values['price'])){
+                    $values['price'] = $values['price'] . '.00';
+                }
+                elseif (!is_numeric($values['price'])) {
+                    $this->registry['error_edit'][] = "Ціна повина бути числом;";
+                }
+                if (!is_numeric($values['qty'])) {
+                    $this->registry['error_edit'][] = "Кількість повина бути числом;";
+                }
+                if (!isset($this->registry['error_edit'])) {
+                    $this->registry['saved'] = 1;
+                    $model->saveItem($id,$values);
+                }
+            }
         }
         $this->registry['product'] = $model->getItem($this->getId());
         $this->setView();
@@ -39,34 +57,51 @@ class ProductController extends Controller {
     }
 
     public function AddAction() {
-
         $model = $this->getModel('Product');
         $this->setTitle("Додавання товару");
+        $sku = $model->getColumn('sku');
         if ($values = $model->getPostValues()) {
-            if (empty($values['sku'])){
-                $this->registry['error_add'][] = "Ви не ввели код товару;";
+            $values['sku'] = strip_tags($values['sku']);
+            $values['name'] = strip_tags($values['name']);
+            $values['description'] = htmlspecialchars($values['description']);
+            if (in_array($values['sku'],$sku)){
+                $this->registry['error_add'][] = "Код товару вже існує";
             }
             if (empty($values['name'])){
                 $this->registry['error_add'][] = "Ви не ввели ім'я товару;";
             }
-            if (empty($values['price'])){
-                $this->registry['error_add'][] = "Ви не ввели ціну;";
+            if (is_int($values['price'])){
+                $values['price'] = $values['price'] . '.00';
             }
             elseif (!is_numeric($values['price'])) {
                 $this->registry['error_add'][] = "Ціна повина бути числом;";
             }
-            if (empty($values['qty'])){
-                $this->registry['error_add'][] = "Ви не ввели кількісь;";
-            }
-            elseif (!is_numeric($values['qty'])) {
+            if (!is_numeric($values['qty'])) {
                 $this->registry['error_add'][] = "Кількість повина бути числом;";
             }
-            if ($erorr == false) {
+            if (!isset($this->registry['error_add'])) {
                 $model->addItem($values);
+                $this->registry['save_add'][] = 'true';
             }
+
+            //else echo 'nononon';
         }
         $this->setView();
         $this->renderLayout();
+    }
+
+    public function DeleteAction() {
+        $model = $this->getModel('Product');
+        $this->setTitle("Видалення товару");
+
+        if (isset($_POST) && key($_POST) == 'delete') {
+            $this->registry['product'] = $model->getItem($this->getId());
+            $id = intval($this->registry['product']['id']);
+            $model->deleteItem($id);
+            //header("Location: /product/list/");
+        }else{
+        $this->setView();
+        $this->renderLayout();}
     }
     
     public function getSortParams() {

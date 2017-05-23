@@ -11,7 +11,7 @@ class Helper {
                ->sort(array('sort_order'=>'ASC'))->getCollection()->select();
     }
     
-    public static function simpleLink($path, $name, $params = []) {
+    public static function simpleLink($path, $name, $params = [], $color = '') {
         if (!empty($params)) {
             $firts_key = array_keys($params)[0];
             foreach($params as $key=>$value) {
@@ -19,7 +19,7 @@ class Helper {
                 $path .= "$key=$value";
             }
         }
-        return '<a href="' . BP . $path .'">' .$name . '</a>';
+        return '<a href="' . BP . $path .'" style="color:'.$color.'">' .$name . '</a>';
     }
 
     public static function getCustomer() {

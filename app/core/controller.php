@@ -52,6 +52,7 @@ class Controller {
     }
     
     public function renderLayout($layout = "layout") {
+        $registry = $this->registry;
         if(file_exists(ROOT . '/app/layouts/'.$layout.'.php')) {
             include ROOT . '/app/layouts/'.$layout.'.php';
         }      

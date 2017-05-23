@@ -110,8 +110,15 @@ class Model {
         $db = new DB();
         return $db->query($sql, $params);
     }
-    
-    public function getPostValues() {
+    public function deleteItem($id){
+        //DELETE FROM `products` WHERE `products`.`id` = 60
+        $sql = "DELETE FROM $this->table_name"." where id = ?";
+        $db = new DB();
+        $params[] = $id;
+        return $db->query($sql, $params);
+    }
+
+        public function getPostValues() {
         $values = [];
         $columns = $this->getColumns();
         foreach ($columns as $column) {
