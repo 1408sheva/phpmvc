@@ -33,6 +33,14 @@ class Helper {
         }
 
     }
+
+    public static function isAdmin() {
+        $role = self::getCustomer();
+        if($role['admin_role']){
+            return true;
+        }else
+            return false;
+    }
     
     public static function redirect($path) {
         $server_host = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];

@@ -39,9 +39,15 @@ foreach($products as $product)  :
         <p> Опис товару: <?php echo htmlspecialchars_decode($product['description']);?></p>
         <p><?php if(!$product['qty'] > 0) { echo 'Нема в наявності'; } ?></p>
         <span style="margin-left: 20px">
+          <?php if (Helper::isAdmin()):?>
             <?php echo Helper::simpleLink('/product/edit', 'Редагувати', array('id'=>$product['id'])). '</span>' ;
             echo '<span style="margin-left: 20px; color: red">'. Helper::simpleLink('/product/delete', 'Видалення', array('id'=>$product['id']), 'red') . '</span>';
             echo '<span style="margin-left: 20px">'. Helper::simpleLink('/product/revision', 'Перегляд', array('id'=>$product['id'])); ?>
+          <?php else:
+                echo '<span style="margin-left: 20px">'. Helper::simpleLink('/product/revision', 'Перегляд', array('id'=>$product['id']));
+          endif;?>
+
+
         </span>
     </div>
 <?php endforeach; ?>

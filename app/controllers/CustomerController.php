@@ -122,18 +122,23 @@ class CustomerController extends Controller {
     }
 
     public function DeleteAction() {
-        $this->setTitle("Видалення клієнта");
-        $model = $this->getModel('Customer');
+        if (Helper::isAdmin()) {
+            $this->setTitle("Видалення клієнта");
+            $model = $this->getModel('Customer');
 
-        if (isset($_POST) && key($_POST) == 'delete') {
-            $id = intval($_POST['id']);
-            $model->deleteItem($id, 'customer_id');
-            header("Location: /customer/list/");
-        }elseif(isset($_POST) && key($_POST) == 'cancel'){
-            header("Location: /customer/list/");
+            if (isset($_POST) && key($_POST) == 'delete') {
+                $id = intval($_POST['id']);
+                $model->deleteItem($id, 'customer_id');
+                header("Location: /customer/list/");
+            } elseif (isset($_POST) && key($_POST) == 'cancel') {
+                header("Location: /customer/list/");
+            } else {
+                $this->setView();
+                $this->renderLayout();
+            }
         }else{
-            $this->setView();
-            $this->renderLayout();}
+            Helper::redirect('/error/forbidden');
+        }
     }
 
     public function RevisionAction(){
@@ -144,6 +149,42 @@ class CustomerController extends Controller {
     }
     public function getId() {
         return filter_input(INPUT_GET, 'id');
+    }
+
+    public function EditAction() {
+        if (Helper::isAdmin()) {
+            $model = $this->getModel('Customer');
+            $this->registry['saved'] = 0;
+            $this->setTitle("Редагування клієнта");
+            $id = filter_input(INPUT_POST, 'id');
+            if ($id) {
+                if ($values = $model->getPostValues()) {
+                    $values['last_name'] = strip_tags($values['last_name']);
+                    $values['first_name'] = strip_tags($values['first_name']);
+                    $values['telephone'] = strip_tags($values['telephone']);
+                    $values['email'] = strip_tags($values['email']);
+                    $values['city'] = strip_tags($values['city']);
+                    if (empty($values['last_name']) || empty($values['first_name'])) {
+                        $this->registry['error_edit'][] = "Ви не ввели ім'я та прізвище;";
+                    }
+                    if (empty($values['telephone'])) {
+                        $this->registry['error_edit'][] = "Ви не ввели телефон;";
+                    }
+                    if (empty($values['email'])) {
+                        $this->registry['error_edit'][] = "Введіть правельно Email;";
+                    }
+                    if (!isset($this->registry['error_edit'])) {
+                        $this->registry['saved'] = 1;
+                        $model->saveItem($id, $values);
+                    }
+                }
+            }
+            $this->registry['customer'] = $model->getItem($this->getId());
+            $this->setView();
+            $this->renderLayout();
+        }else{
+            Helper::redirect('/error/forbidden');
+        }
     }
 
 }

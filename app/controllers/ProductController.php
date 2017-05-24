@@ -10,7 +10,6 @@ class ProductController extends Controller {
         $this->setTitle("Товари");
         $this->registry['products'] = $this->getModel('Product')->initCollection()
                ->sort($this->getSortParams())->getCollection()->select();
-
         $this->setView();
         $this->renderLayout();
     }
@@ -24,36 +23,39 @@ class ProductController extends Controller {
     }
 
     public function EditAction() {
-        $model = $this->getModel('Product');
-        $this->registry['saved'] = 0;
-        $this->setTitle("Редагування товару");
-        $id = filter_input(INPUT_POST, 'id');
-        if ($id) {
-            if ($values = $model->getPostValues()) {
-                $values['sku'] = strip_tags($values['sku']);
-                $values['name'] = strip_tags($values['name']);
-                $values['description'] = htmlspecialchars($values['description']);
-                if (empty($values['name'])){
-                    $this->registry['error_edit'][] = "Ви не ввели ім'я товару;";
-                }
-                if (is_int($values['price'])){
-                    $values['price'] = $values['price'] . '.00';
-                }
-                elseif (!is_numeric($values['price'])) {
-                    $this->registry['error_edit'][] = "Ціна повина бути числом;";
-                }
-                if (!is_numeric($values['qty'])) {
-                    $this->registry['error_edit'][] = "Кількість повина бути числом;";
-                }
-                if (!isset($this->registry['error_edit'])) {
-                    $this->registry['saved'] = 1;
-                    $model->saveItem($id,$values);
+        if (Helper::isAdmin()) {
+            $model = $this->getModel('Product');
+            $this->registry['saved'] = 0;
+            $this->setTitle("Редагування товару");
+            $id = filter_input(INPUT_POST, 'id');
+            if ($id) {
+                if ($values = $model->getPostValues()) {
+                    $values['sku'] = strip_tags($values['sku']);
+                    $values['name'] = strip_tags($values['name']);
+                    $values['description'] = htmlspecialchars($values['description']);
+                    if (empty($values['name'])) {
+                        $this->registry['error_edit'][] = "Ви не ввели ім'я товару;";
+                    }
+                    if (is_int($values['price'])) {
+                        $values['price'] = $values['price'] . '.00';
+                    } elseif (!is_numeric($values['price'])) {
+                        $this->registry['error_edit'][] = "Ціна повина бути числом;";
+                    }
+                    if (!is_numeric($values['qty'])) {
+                        $this->registry['error_edit'][] = "Кількість повина бути числом;";
+                    }
+                    if (!isset($this->registry['error_edit'])) {
+                        $this->registry['saved'] = 1;
+                        $model->saveItem($id, $values);
+                    }
                 }
             }
+            $this->registry['product'] = $model->getItem($this->getId());
+            $this->setView();
+            $this->renderLayout();
+        }else{
+            Helper::redirect('/error/forbidden');
         }
-        $this->registry['product'] = $model->getItem($this->getId());
-        $this->setView();
-        $this->renderLayout();
     }
 
     public function AddAction() {
@@ -91,18 +93,22 @@ class ProductController extends Controller {
     }
 
     public function DeleteAction() {
-        $this->setTitle("Видалення товару");
-        $model = $this->getModel('Product');
+        if (Helper::isAdmin()){
+            $this->setTitle("Видалення товару");
+            $model = $this->getModel('Product');
 
-        if (isset($_POST) && key($_POST) == 'delete') {
-            $id = intval($_POST['id']);
-            $model->deleteItem($id, 'id');
-            header("Location: /product/list/");
-        }elseif(isset($_POST) && key($_POST) == 'cancel'){
-            header("Location: /product/list/");
+            if (isset($_POST) && key($_POST) == 'delete') {
+                $id = intval($_POST['id']);
+                $model->deleteItem($id, 'id');
+                header("Location: /product/list/");
+            }elseif(isset($_POST) && key($_POST) == 'cancel'){
+                header("Location: /product/list/");
+            }else{
+            $this->setView();
+            $this->renderLayout();}
         }else{
-        $this->setView();
-        $this->renderLayout();}
+            Helper::redirect('/error/forbidden');
+        }
     }
 
     public function RevisionAction(){
