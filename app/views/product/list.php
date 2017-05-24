@@ -20,12 +20,13 @@
 <input type="submit" value="Submit">
 </form>
 
-<div class="product"><p>
-        <?php echo Helper::simpleLink('/product/add', 'Додати товар'); ?>
-</p></div>
+    <?php if (Helper::isAdmin()) { ?>
 
-<?php
-
+    <div class="product"><p>
+            <?php echo Helper::simpleLink('/product/add', 'Додати товар'); ?>
+        </p></div>
+    <?php
+        }
 $products =  $this->registry['products'];
 
 foreach($products as $product)  :

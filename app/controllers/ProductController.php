@@ -59,37 +59,41 @@ class ProductController extends Controller {
     }
 
     public function AddAction() {
-        $model = $this->getModel('Product');
-        $this->setTitle("Додавання товару");
-        $sku = $model->getColumn('sku');
-        if ($values = $model->getPostValues()) {
-            $values['sku'] = strip_tags($values['sku']);
-            $values['name'] = strip_tags($values['name']);
-            $values['description'] = htmlspecialchars($values['description']);
-            if (in_array($values['sku'],$sku)){
-                $this->registry['error_add'][] = "Код товару вже існує";
-            }
-            if (empty($values['name'])){
-                $this->registry['error_add'][] = "Ви не ввели ім'я товару;";
-            }
-            if (is_int($values['price'])){
-                $values['price'] = $values['price'] . '.00';
-            }
-            elseif (!is_numeric($values['price'])) {
-                $this->registry['error_add'][] = "Ціна повина бути числом;";
-            }
-            if (!is_numeric($values['qty'])) {
-                $this->registry['error_add'][] = "Кількість повина бути числом;";
-            }
-            if (!isset($this->registry['error_add'])) {
-                $model->addItem($values);
-                $this->registry['save_add'][] = 'true';
-            }
+        if (Helper::isAdmin()) {
+            $model = $this->getModel('Product');
+            $this->setTitle("Додавання товару");
+            $sku = $model->getColumn('sku');
+            if ($values = $model->getPostValues()) {
+                $values['sku'] = strip_tags($values['sku']);
+                $values['name'] = strip_tags($values['name']);
+                $values['description'] = htmlspecialchars($values['description']);
+                if (in_array($values['sku'],$sku)){
+                    $this->registry['error_add'][] = "Код товару вже існує";
+                }
+                if (empty($values['name'])){
+                    $this->registry['error_add'][] = "Ви не ввели ім'я товару;";
+                }
+                if (is_int($values['price'])){
+                    $values['price'] = $values['price'] . '.00';
+                }
+                elseif (!is_numeric($values['price'])) {
+                    $this->registry['error_add'][] = "Ціна повина бути числом;";
+                }
+                if (!is_numeric($values['qty'])) {
+                    $this->registry['error_add'][] = "Кількість повина бути числом;";
+                }
+                if (!isset($this->registry['error_add'])) {
+                    $model->addItem($values);
+                    $this->registry['save_add'][] = 'true';
+                }
 
-            //else echo 'nononon';
+                //else echo 'nononon';
+            }
+            $this->setView();
+            $this->renderLayout();
+        }else{
+            Helper::redirect('/error/forbidden');
         }
-        $this->setView();
-        $this->renderLayout();
     }
 
     public function DeleteAction() {
