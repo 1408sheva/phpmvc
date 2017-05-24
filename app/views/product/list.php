@@ -41,7 +41,7 @@ foreach($products as $product)  :
         <span style="margin-left: 20px">
             <?php echo Helper::simpleLink('/product/edit', 'Редагувати', array('id'=>$product['id'])). '</span>' ;
             echo '<span style="margin-left: 20px; color: red">'. Helper::simpleLink('/product/delete', 'Видалення', array('id'=>$product['id']), 'red') . '</span>';
-            echo '<span style="margin-left: 20px">'. Helper::simpleLink('/product/view', 'Перегляд', array('id'=>$product['id'])); ?>
+            echo '<span style="margin-left: 20px">'. Helper::simpleLink('/product/revision', 'Перегляд', array('id'=>$product['id'])); ?>
         </span>
     </div>
 <?php endforeach; ?>

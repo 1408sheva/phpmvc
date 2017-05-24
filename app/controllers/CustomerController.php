@@ -120,4 +120,30 @@ class CustomerController extends Controller {
 
         }
     }
+
+    public function DeleteAction() {
+        $this->setTitle("Видалення клієнта");
+        $model = $this->getModel('Customer');
+
+        if (isset($_POST) && key($_POST) == 'delete') {
+            $id = intval($_POST['id']);
+            $model->deleteItem($id, 'customer_id');
+            header("Location: /customer/list/");
+        }elseif(isset($_POST) && key($_POST) == 'cancel'){
+            header("Location: /customer/list/");
+        }else{
+            $this->setView();
+            $this->renderLayout();}
+    }
+
+    public function RevisionAction(){
+        $model = $this->getModel('Customer');
+        $this->setTitle("Додавання товару");
+        $this->setView();
+        $this->renderLayout();
+    }
+    public function getId() {
+        return filter_input(INPUT_GET, 'id');
+    }
+
 }

@@ -110,9 +110,9 @@ class Model {
         $db = new DB();
         return $db->query($sql, $params);
     }
-    public function deleteItem($id){
+    public function deleteItem($id, $type_id){
         //DELETE FROM `products` WHERE `products`.`id` = 60
-        $sql = "DELETE FROM $this->table_name"." where id = ?";
+        $sql = "DELETE FROM $this->table_name"." where $type_id = ?";
         $db = new DB();
         $params[] = $id;
         return $db->query($sql, $params);

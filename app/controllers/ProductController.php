@@ -91,19 +91,27 @@ class ProductController extends Controller {
     }
 
     public function DeleteAction() {
-        $model = $this->getModel('Product');
         $this->setTitle("Видалення товару");
+        $model = $this->getModel('Product');
 
         if (isset($_POST) && key($_POST) == 'delete') {
-            $this->registry['product'] = $model->getItem($this->getId());
-            $id = intval($this->registry['product']['id']);
-            $model->deleteItem($id);
-            //header("Location: /product/list/");
+            $id = intval($_POST['id']);
+            $model->deleteItem($id, 'id');
+            header("Location: /product/list/");
+        }elseif(isset($_POST) && key($_POST) == 'cancel'){
+            header("Location: /product/list/");
         }else{
         $this->setView();
         $this->renderLayout();}
     }
-    
+
+    public function RevisionAction(){
+        $model = $this->getModel('Product');
+        $this->setTitle("Додавання товару");
+        $this->setView();
+        $this->renderLayout();
+    }
+
     public function getSortParams() {
         $params = [];
         if (isset($_COOKIE['sortparams'])) {

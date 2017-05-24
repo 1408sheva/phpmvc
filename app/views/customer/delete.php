@@ -1,8 +1,8 @@
 <?php
-$model = $this->getModel('Product');
+$model = $this->getModel('Customer');
 $data = $model->getItem($this->getId());
-$id = $data['id'];?>
-<form class="form-horizontal" role="form" method="post" action="/product/delete/">
+$id = $data['customer_id'];?>
+<form class="form-horizontal" role="form" method="post" action="/customer/delete/">
     <div class="form-group">
         <div class="col-sm-10" style="text-align: center">
             <h2>Чи бажаєте видалити продукт ??</h2>
